@@ -152,6 +152,15 @@ def gradAscent(array_x,array_y,min_alpha=0.001):
         weights = weights + alpha*array_x[k].reshape((n,1))*error
 #        array_weights[k] = weights.transpose()
     return weights,array_weights.transpose()
+def arrayToFile(in_array,file_name):
+    ff = open(file_name,'w+')
+    for row in in_array:
+        for col in row:
+            ff.write(str(col)+'  ')
+        ff.write('\n')
+    ff.close()
+    print "successfullt translate the input array to "+file_name
+            
 
 class simulation:
 
@@ -595,8 +604,7 @@ class simulation:
             trans_p = np.array([x/float(np.sum(x)) for x in trans])
             trans_p = TD.cf(trans_p,inNum)
             for i in range(len(trans)):
-                trans[i] = trans_p[i]*np.sum(trans[i])
-            
+                trans[i] = trans_p[i]*np.sum(trans[i])            
             print trans
             scean = CE3.scenario(trans)
             for c in con:
@@ -611,6 +619,8 @@ class simulation:
             trans = self.trans_matrix()
             trans = TD.cf(trans,inNum)
             arcpy.AddMessage('no condition added to the prediction')
+        arrayToFile(trans,os.path.join(self.work_path,'trans_matrix.txt'))
+        
         td = TD.matrix_divide(trans,self.step,['A']*len(trans),self.max_cycle1,self.min_alpha1)
         trans_p = td.p
         print trans_p
@@ -653,3 +663,5 @@ class simulation:
                 arcpy.AddMessage("succefully allocated for all categories")
                 
         return out_file        
+    
+
